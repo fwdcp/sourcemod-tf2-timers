@@ -99,41 +99,16 @@ public Native_GetKOTHTimeRemaining(Handle:plugin, numParams)
 
 public Native_GetStopwatchTimeSet(Handle:plugin, numParams)
 {
+	new entity = FindTimer("zz_stopwatch_timer");
 	new Float:timeSet;
-	
-	if (!GameRules_GetProp("m_bStopWatch"))
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "not in stopwatch mode");
-	}
-	
-	new entity = -1;
-	
-	while ((entity = FindEntityByClassname(entity, "tf_objective_resource")) != -1)
-	{
-		new timer = GetEntPropEnt(entity, Prop_Send, "m_iStopWatchTimer");
-		
-		if (!IsValidEntity(timer))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "stopwatch timer not found");
-		}
-		
-		decl String:name[50];
-		GetEntityClassname(timer, name, sizeof(name));
-		
-		if (!StrEqual(name, "team_round_timer") || !GetEntProp(timer, Prop_Send, "m_bStopWatchTimer"))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "invalid stopwatch timer");
-		}
-		
-		
-		timeSet = GetEntPropFloat(timer, Prop_Send, "m_flTotalTime");
-		
-		return _:timeSet;
-	}
 	
 	if (entity == -1)
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "stopwatch info not found");
+		ThrowNativeError(SP_ERROR_NATIVE, "stopwatch timer not found");
+	}
+	else
+	{
+		timeSet = GetEntPropFloat(entity, Prop_Send, "m_flTotalTime");
 	}
 	
 	return _:timeSet;
@@ -141,40 +116,16 @@ public Native_GetStopwatchTimeSet(Handle:plugin, numParams)
 
 public Native_GetStopwatchTimeRemaining(Handle:plugin, numParams)
 {
+	new entity = FindTimer("zz_stopwatch_timer");
 	new Float:timeRemaining;
-	
-	if (!GameRules_GetProp("m_bStopWatch"))
-	{
-		ThrowNativeError(SP_ERROR_NATIVE, "not in stopwatch mode");
-	}
-	
-	new entity = -1;
-	
-	while ((entity = FindEntityByClassname(entity, "tf_objective_resource")) != -1)
-	{
-		new timer = GetEntPropEnt(entity, Prop_Send, "m_iStopWatchTimer");
-		
-		if (!IsValidEntity(timer))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "stopwatch timer not found");
-		}
-		
-		decl String:name[50];
-		GetEntityClassname(timer, name, sizeof(name));
-		
-		if (!StrEqual(name, "team_round_timer") || !GetEntProp(timer, Prop_Send, "m_bStopWatchTimer"))
-		{
-			ThrowNativeError(SP_ERROR_NATIVE, "invalid stopwatch timer");
-		}
-		
-		timeRemaining = GetTimeRemaining(timer);
-		
-		return _:timeRemaining;
-	}
 	
 	if (entity == -1)
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "stopwatch info not found");
+		ThrowNativeError(SP_ERROR_NATIVE, "stopwatch timer not found");
+	}
+	else
+	{
+		timeRemaining = GetTimeRemaining(entity);
 	}
 	
 	return _:timeRemaining;
