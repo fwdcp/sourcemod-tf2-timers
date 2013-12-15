@@ -43,7 +43,7 @@ public Native_GetRoundTimeRemaining(Handle:plugin, numParams)
 	
 	if (entity == -1)
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "timer for map not found");
+		ThrowNativeError(SP_ERROR_NATIVE, "timer for round not found");
 	}
 	
 	return _:timeRemaining;
@@ -51,26 +51,16 @@ public Native_GetRoundTimeRemaining(Handle:plugin, numParams)
 
 public Native_GetMapTimeRemaining(Handle:plugin, numParams)
 {
+	new entity = FindTimer("zz_teamplay_timelimit_timer");
 	new Float:timeRemaining;
-	
-	new entity = -1;
-	
-	while ((entity = FindEntityByClassname(entity, "team_round_timer")) != -1)
-	{
-		decl String:name[50];
-		GetEntPropString(entity, Prop_Data, "m_iName", name, sizeof(name));
-		
-		if (StrEqual(name, "zz_teamplay_timelimit_timer"))
-		{
-			timeRemaining = GetTimeRemaining(entity);
-				
-			return _:timeRemaining;
-		}
-	}
 	
 	if (entity == -1)
 	{
 		ThrowNativeError(SP_ERROR_NATIVE, "map timer not found");
+	}
+	else
+	{
+		timeRemaining = GetTimeRemaining(entity);
 	}
 	
 	return _:timeRemaining;
@@ -78,38 +68,30 @@ public Native_GetMapTimeRemaining(Handle:plugin, numParams)
 
 public Native_GetKOTHTimeRemaining(Handle:plugin, numParams)
 {
+	new entity;
 	new Float:timeRemaining;
-	
-	new entity = -1;
 	new TFTeam:team = TFTeam:GetNativeCell(1);
 	
 	if (team == TFTeam_Unassigned || team == TFTeam_Spectator)
 	{
 		ThrowNativeError(SP_ERROR_NATIVE, "valid team not specified");
 	}
-	
-	while ((entity = FindEntityByClassname(entity, "team_round_timer")) != -1)
+	else if (team == TFTeam_Red)
 	{
-		decl String:name[50];
-		GetEntPropString(entity, Prop_Data, "m_iName", name, sizeof(name));
-		
-		if (team == TFTeam_Red && StrEqual(name, "zz_red_koth_timer"))
-		{
-			timeRemaining = GetTimeRemaining(entity);
-				
-			return _:timeRemaining;
-		}
-		else if (team == TFTeam_Blue && StrEqual(name, "zz_blue_koth_timer"))
-		{
-			timeRemaining = GetTimeRemaining(entity);
-				
-			return _:timeRemaining;
-		}
+		entity = FindTimer("zz_red_koth_timer");
+	}
+	else if (team == TFTeam_Blue)
+	{
+		entity = FindTimer("zz_blue_koth_timer");
 	}
 	
 	if (entity == -1)
 	{
 		ThrowNativeError(SP_ERROR_NATIVE, "KOTH timer for team not found");
+	}
+	else
+	{
+		timeRemaining = GetTimeRemaining(entity);
 	}
 	
 	return _:timeRemaining;
@@ -226,6 +208,24 @@ public Native_GetStopwatchState(Handle:plugin, numParams)
 {
 	new stopwatchState = GameRules_GetProp("m_nStopWatchState");
 	return stopwatchState;
+}
+
+FindTimer(const String:desiredName[255])
+{
+	new entity = -1;
+	
+	while ((entity = FindEntityByClassname(entity, "team_round_timer")) != -1)
+	{
+		decl String:timerName[255];
+		GetEntPropString(entity, Prop_Data, "m_iName", timerName, sizeof(timerName));
+		
+		if (StrEqual(timerName, desiredName))
+		{
+			return entity;
+		}
+	}
+	
+	return -1;
 }
 
 Float:GetTimeRemaining(entity)
