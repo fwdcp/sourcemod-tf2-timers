@@ -76,7 +76,7 @@ public Native_GetMapTimeRemaining(Handle:plugin, numParams)
 	return _:timeRemaining;
 }
 
-public Native_GetKOTHTimer(Handle:plugin, numParams)
+public Native_GetKOTHTimeRemaining(Handle:plugin, numParams)
 {
 	new Float:timeRemaining;
 	
@@ -136,7 +136,7 @@ public Native_GetStopwatchTimeSet(Handle:plugin, numParams)
 		}
 		
 		decl String:name[50];
-		GetEntityClassname(entity, name, sizeof(name));
+		GetEntityClassname(timer, name, sizeof(name));
 		
 		if (!StrEqual(name, "team_round_timer") || !GetEntProp(timer, Prop_Send, "m_bStopWatchTimer"))
 		{
@@ -144,7 +144,7 @@ public Native_GetStopwatchTimeSet(Handle:plugin, numParams)
 		}
 		
 		
-		timeSet = GetEntPropFloat(entity, Prop_Send, "m_flTotalTime");
+		timeSet = GetEntPropFloat(timer, Prop_Send, "m_flTotalTime");
 		
 		return _:timeSet;
 	}
@@ -178,15 +178,14 @@ public Native_GetStopwatchTimeRemaining(Handle:plugin, numParams)
 		}
 		
 		decl String:name[50];
-		GetEntityClassname(entity, name, sizeof(name));
+		GetEntityClassname(timer, name, sizeof(name));
 		
 		if (!StrEqual(name, "team_round_timer") || !GetEntProp(timer, Prop_Send, "m_bStopWatchTimer"))
 		{
 			ThrowNativeError(SP_ERROR_NATIVE, "invalid stopwatch timer");
 		}
 		
-		
-		timeRemaining = GetTimeRemaining(entity);
+		timeRemaining = GetTimeRemaining(timer);
 		
 		return _:timeRemaining;
 	}
