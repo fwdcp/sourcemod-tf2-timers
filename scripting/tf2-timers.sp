@@ -13,8 +13,9 @@ public Plugin:myinfo =
 
 public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 {
-	CreateNative("TF2Timers_GetMainTimer", Native_GetMainTimer);
-	CreateNative("TF2Timers_GetKOTHTimer", Native_GetKOTHTimer);
+	CreateNative("TF2Timers_GetRoundTimeRemaining", Native_GetRoundTimeRemaining);
+	CreateNative("TF2Timers_GetMapTimeRemaining", Native_GetMapTimeRemaining);
+	CreateNative("TF2Timers_GetKOTHTimeRemaining", Native_GetKOTHTimeRemaining);
 	CreateNative("TF2Timers_GetStopwatchTimeSet", Native_GetStopwatchTimeSet);
 	CreateNative("TF2Timers_GetStopwatchTimeRemaining", Native_GetStopwatchTimeRemaining);
 	CreateNative("TF2Timers_GetStopwatchPoints", Native_GetStopwatchPoints);
@@ -22,7 +23,7 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 	return APLRes_Success;
 }
 
-public Native_GetMainTimer(Handle:plugin, numParams)
+public Native_GetRoundTimeRemaining(Handle:plugin, numParams)
 {
 	new entity = -1;
 	new Float:timeRemaining;
@@ -34,7 +35,7 @@ public Native_GetMainTimer(Handle:plugin, numParams)
 		
 		if (GetEntProp(entity, Prop_Send, "m_bShowInHUD") && !GetEntProp(entity, Prop_Send, "m_bStopWatchTimer") && !StrEqual(name, "zz_red_koth_timer") && !StrEqual(name, "zz_blue_koth_timer"))
 		{
-			timeRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimeRemaining");
+			timeRemaining = GetTimeRemaining(entity);
 				
 			return _:timeRemaining;
 		}
@@ -43,6 +44,33 @@ public Native_GetMainTimer(Handle:plugin, numParams)
 	if (entity == -1)
 	{
 		ThrowNativeError(SP_ERROR_NATIVE, "timer for map not found");
+	}
+	
+	return _:timeRemaining;
+}
+
+public Native_GetMapTimeRemaining(Handle:plugin, numParams)
+{
+	new Float:timeRemaining;
+	
+	new entity = -1;
+	
+	while ((entity = FindEntityByClassname(entity, "team_round_timer")) != -1)
+	{
+		decl String:name[50];
+		GetEntPropString(entity, Prop_Data, "m_iName", name, sizeof(name));
+		
+		if (StrEqual(name, "zz_teamplay_timelimit_timer"))
+		{
+			timeRemaining = GetTimeRemaining(entity);
+				
+			return _:timeRemaining;
+		}
+	}
+	
+	if (entity == -1)
+	{
+		ThrowNativeError(SP_ERROR_NATIVE, "map timer not found");
 	}
 	
 	return _:timeRemaining;
@@ -67,13 +95,13 @@ public Native_GetKOTHTimer(Handle:plugin, numParams)
 		
 		if (team == TFTeam_Red && StrEqual(name, "zz_red_koth_timer"))
 		{
-			timeRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimeRemaining");
+			timeRemaining = GetTimeRemaining(entity);
 				
 			return _:timeRemaining;
 		}
 		else if (team == TFTeam_Blue && StrEqual(name, "zz_blue_koth_timer"))
 		{
-			timeRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimeRemaining");
+			timeRemaining = GetTimeRemaining(entity);
 				
 			return _:timeRemaining;
 		}
@@ -158,7 +186,7 @@ public Native_GetStopwatchTimeRemaining(Handle:plugin, numParams)
 		}
 		
 		
-		timeRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimeRemaining");
+		timeRemaining = GetTimeRemaining(entity);
 		
 		return _:timeRemaining;
 	}
@@ -199,4 +227,25 @@ public Native_GetStopwatchState(Handle:plugin, numParams)
 {
 	new stopwatchState = GameRules_GetProp("m_nStopWatchState");
 	return stopwatchState;
+}
+
+Float:GetTimeRemaining(entity)
+{
+	new Float:secondsRemaining;
+	
+	if (GetEntProp(entity, Prop_Send, "m_bTimerPaused"))
+	{
+		secondsRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimeRemaining");
+	}
+	else
+	{
+		secondsRemaining = GetEntPropFloat(entity, Prop_Send, "m_flTimerEndTime") - GetGameTime();
+	}
+
+	if (secondsRemaining < 0)
+	{
+		secondsRemaining = 0.0;
+	}
+
+	return secondsRemaining;
 }

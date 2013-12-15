@@ -4,12 +4,20 @@
 #define _tf2_timers_included_
  
 /**
- * Gets the main map timer.
+ * Gets the main round timer.
  *
  * @return		The time remaining.
  * @error		Game mode does not have timer.	
  */
-native Float:TF2Timers_GetMainTimer();
+native Float:TF2Timers_GetRoundTimeRemaining();
+ 
+/**
+ * Gets the main map timer.
+ *
+ * @return		The time remaining.
+ * @error		Map does not have timer.	
+ */
+native Float:TF2Timers_GetMapTimeRemaining();
 
 /**
  * Gets the KOTH timer for a team.
@@ -18,7 +26,7 @@ native Float:TF2Timers_GetMainTimer();
  * @return		The time remaining.
  * @error		Invalid team, or KOTH not current game mode.	
  */
-native Float:TF2Timers_GetKOTHTimer(TFTeam:team);
+native Float:TF2Timers_GetKOTHTimeRemaining(TFTeam:team);
 
 /**
  * Gets the time set for the stopwatch.
