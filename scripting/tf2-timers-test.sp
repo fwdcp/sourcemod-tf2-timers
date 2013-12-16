@@ -241,7 +241,7 @@ public Action:GetStopwatchPointsRemaining(client, args)
 {
 	new points = TF2Timers_GetStopwatchPointsRemaining();
 	
-	ReplyToCommand(client, "Stopwatch points remaining: %f", points);
+	ReplyToCommand(client, "Stopwatch points remaining: %i", points);
 	
 	return Plugin_Handled;
 }
@@ -250,7 +250,7 @@ public Action:GetStopwatchPointsSet(client, args)
 {
 	new points = TF2Timers_GetStopwatchPointsSet();
 	
-	ReplyToCommand(client, "Stopwatch points set: %f", points);
+	ReplyToCommand(client, "Stopwatch points set: %i", points);
 	
 	return Plugin_Handled;
 }
