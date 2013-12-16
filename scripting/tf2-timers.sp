@@ -95,7 +95,7 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 	CreateNative("TF2Timers_GetKOTHTimer", Native_GetKOTHTimer);
 	CreateNative("TF2Timers_GetStopwatchTimer", Native_GetStopwatchTimer);
 	CreateNative("TF2Timers_AddTime", Native_AddTime);
-	CreateNative("TF2Timers_SetTime", Native_AddTime);
+	CreateNative("TF2Timers_SetTime", Native_SetTime);
 	CreateNative("TF2Timers_GetTime", Native_GetTime);
 	CreateNative("TF2Timers_GetStopwatchTimeSet", Native_GetStopwatchTimeSet);
 	CreateNative("TF2Timers_GetStopwatchPointsSet", Native_GetStopwatchPointsSet);
