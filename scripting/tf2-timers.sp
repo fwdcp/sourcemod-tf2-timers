@@ -18,7 +18,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
-	timelimit = FindConVar("mp_timelimt");
+	timelimit = FindConVar("mp_timelimit");
 	
 	if (timelimit == INVALID_HANDLE)
 	{
